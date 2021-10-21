@@ -1,6 +1,6 @@
-package com.lipsoft.locacaofilmesapi.repositorios;
+package com.lipsoft.locacaofilmesapi.repository;
 
-import com.lipsoft.locacaofilmesapi.entidades.Locacao;
+import com.lipsoft.locacaofilmesapi.entities.Locacao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
