@@ -1,10 +1,19 @@
-package com.lipsoft.locacaofilmesapi.entidades;
+package com.lipsoft.locacaofilmesapi.entities;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "TBL_ATORES")
 public class Ator {
 
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column @NotNull
     private String nome;
+    @Column @NotNull
     private int idade;
+    @Column @NotNull
     private String nomeDoPersonagem;
 
     public Ator() {}
@@ -13,6 +22,11 @@ public class Ator {
         this.nome = nome;
         this.idade = idade;
         this.nomeDoPersonagem = nomeDoPersonagem;
+    }
+
+
+    public Long getId() {
+        return id;
     }
 
     public String getNome() {
