@@ -1,4 +1,4 @@
-package com.lipsoft.locacaofilmesapi.entities;
+package com.lipsoft.locacaofilmesapi.entidades;
 
 import java.time.LocalDateTime;
 
