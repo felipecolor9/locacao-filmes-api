@@ -35,6 +35,10 @@ public class Locacao {
         this.valorTotal = valorTotal;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Filme getFilme() {
         return filme;
     }
