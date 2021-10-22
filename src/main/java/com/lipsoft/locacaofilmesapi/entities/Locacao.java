@@ -1,5 +1,7 @@
 package com.lipsoft.locacaofilmesapi.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -17,9 +19,10 @@ public class Locacao {
     @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
-    @Column @NotNull
+    @Column @JsonIgnore
     private LocalDateTime dataInicioLocacao;
     @Column @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime dataFimLocacao;
     @Column @NotNull
     private double valorTotal;
