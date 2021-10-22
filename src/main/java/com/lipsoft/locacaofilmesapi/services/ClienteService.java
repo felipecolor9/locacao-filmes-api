@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class ClienteService implements DbBasicsService<Cliente> {
@@ -20,6 +21,7 @@ public class ClienteService implements DbBasicsService<Cliente> {
 
     @Override
     public MessageResponse add(Cliente cliente) {
+        cliente.setEstadoSigla(cliente.getEstadoSigla().toUpperCase().trim());
         clienteRepository.save(cliente);
         return createMessageResponse("Criado o cliente com id= ",cliente.getId());
     }
