@@ -5,41 +5,40 @@ import com.lipsoft.locacaofilmesapi.exceptions.ClienteNotFoundException;
 import com.lipsoft.locacaofilmesapi.exceptions.FilmeAlreadyRentedException;
 import com.lipsoft.locacaofilmesapi.exceptions.FilmeNotFoundException;
 import com.lipsoft.locacaofilmesapi.exceptions.LocacaoNotFoundException;
-import com.lipsoft.locacaofilmesapi.repository.FilmeRepository;
 import com.lipsoft.locacaofilmesapi.repository.LocacaoRepository;
 import com.lipsoft.locacaofilmesapi.response.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class LocacaoService {
     private LocacaoRepository locacaoRepository;
-    private FilmeRepository filmeRepository;
-    private FilmeService filmeService;
     private ClienteService clienteService;
+    private FilmeService filmeService;
 
     @Autowired
-    public LocacaoService(LocacaoRepository locacaoRepository, FilmeRepository filmeRepository, FilmeService filmeService, ClienteService clienteService) {
+    public LocacaoService(LocacaoRepository locacaoRepository, ClienteService clienteService,  FilmeService filmeService) {
         this.locacaoRepository = locacaoRepository;
-        this.filmeRepository = filmeRepository;
-        this.filmeService = filmeService;
         this.clienteService = clienteService;
+        this.filmeService = filmeService;
     }
 
-    public void add(Locacao locacao, long filmeId, long clientId) throws FilmeNotFoundException, FilmeAlreadyRentedException, ClienteNotFoundException {
+    public MessageResponse add(Locacao locacao, long filmeId, long clientId) throws FilmeNotFoundException, FilmeAlreadyRentedException, ClienteNotFoundException {
         if (verifyRentDisponibility(filmeId)) {
             locacao.setDataInicioLocacao(LocalDateTime.now());
+            locacao.setFilme(filmeService.findByID(filmeId));
             locacao.setCliente(clienteService.findByID(clientId));
             locacaoRepository.save(locacao);
-            createMessageResponse("Alugando filme com ID= ", filmeId);
+            return createMessageResponse("Alugando filme com ID= ", filmeId);
         }
+        return createMessageResponse("Não foi possível alugar filme com ID= ", filmeId);
     }
 
-    //Terminar sexta.
     private boolean verifyRentDisponibility(long filmeId) throws FilmeAlreadyRentedException {
-
         var rentListWithMovie = findAll().stream()
                 .filter(loc -> (loc.getFilme().getId() == filmeId))
                 .collect(Collectors.toList());
@@ -58,12 +57,6 @@ public class LocacaoService {
 
     public Locacao findByID(Long id) throws LocacaoNotFoundException {
         return locacaoRepository.findById(id).orElseThrow(() -> new LocacaoNotFoundException(id));
-    }
-
-    public MessageResponse deleteById(Long id) throws LocacaoNotFoundException {
-        locacaoRepository.findById(id).orElseThrow(() -> new LocacaoNotFoundException(id));
-        locacaoRepository.deleteById(id);
-        return createMessageResponse("Deletado o locacao com id= ",id);
     }
 
     public MessageResponse createMessageResponse(String msg, Long id) {
