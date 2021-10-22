@@ -12,19 +12,20 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/filme/ator")
+@RequestMapping("/api/atores")
 public class AtorController {
 
     private AtorService atorService;
 
     @Autowired
-    public AtorController() {
+    public AtorController(AtorService atorService) {
+        this.atorService = atorService;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MessageResponse add(@RequestBody @Valid Ator ator) {
-        return atorService.add(ator);
+      return atorService.add(ator);
     }
 
     @GetMapping("/{id}")
@@ -33,7 +34,7 @@ public class AtorController {
         return atorService.findByID(id);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     public List<Ator> findAll() {
         return atorService.findAll();
