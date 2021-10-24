@@ -9,11 +9,11 @@ public class Ator {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column @NotNull
+    @Column
     private String nome;
-    @Column @NotNull
+    @Column
     private int idade;
-    @Column @NotNull
+    @Column
     private String nomeDoPersonagem;
 
     public Ator() {}

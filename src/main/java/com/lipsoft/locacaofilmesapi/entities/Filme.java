@@ -10,9 +10,9 @@ public class Filme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column @NotNull
+    @Column
     private String nomeDoFilme;
-    @Column @NotNull
+    @Column
     private int anoDeLancamento;
     @Column
     private double notaDosUsuarios;
