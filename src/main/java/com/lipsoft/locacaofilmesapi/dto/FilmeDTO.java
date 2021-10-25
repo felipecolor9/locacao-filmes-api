@@ -19,10 +19,9 @@ public class FilmeDTO {
     private Long id;
 
     @NotNull
-    @Size(min = 1, max = 200)
+    @Size(min = 1, max = 200, message = "O nome do filme deve conter de 1 a 200 caracteres")
     private String nomeDoFilme;
     @NotNull
-    @Size(min = 4, max = 4)
     @Min(value = 1900, message = "O ano de lançamento não deve ser anterior a 1900")
 //  @Max(value = 2021, message = "O ano de lançamento não deve ser posterior ao ano atual(2021)") -> Tratamento via front-end
     private Integer anoDeLancamento;
