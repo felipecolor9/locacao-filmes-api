@@ -1,18 +1,21 @@
 package com.lipsoft.locacaofilmesapi.services;
 
-import com.lipsoft.locacaofilmesapi.entities.Ator;
+import com.lipsoft.locacaofilmesapi.dto.AtorDTO;
 import com.lipsoft.locacaofilmesapi.exceptions.AtorNotFoundException;
+import com.lipsoft.locacaofilmesapi.mapper.AtorMapper;
 import com.lipsoft.locacaofilmesapi.repository.AtorRepository;
 import com.lipsoft.locacaofilmesapi.response.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class AtorService implements DbBasicsService<Ator> {
+public class AtorService implements DbBasicsService<AtorDTO> {
     private AtorRepository atorRepository;
     private MessageResponse messageResponse;
+    private final AtorMapper atorMapper = AtorMapper.INSTANCE;
 
     @Autowired
     public AtorService(AtorRepository atorRepository, MessageResponse messageResponse) {
@@ -21,30 +24,32 @@ public class AtorService implements DbBasicsService<Ator> {
     }
 
     @Override
-    public MessageResponse add(Ator ator) {
-        atorRepository.save(ator);
+    public MessageResponse add(AtorDTO atorDTO) {
+        var ator = atorRepository.save(atorMapper.toModel(atorDTO));
         return messageResponse.createMessageResponse("Criando o ator com id= ", ator.getId());
     }
 
     @Override
-    public List<Ator> findAll() {
-        return atorRepository.findAll();
+    public List<AtorDTO> findAll() {
+        return atorRepository.findAll()
+                .stream().map(atorMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Ator findByID(Long id) throws AtorNotFoundException {
-        return atorRepository.findById(id).orElseThrow(() -> new AtorNotFoundException(id));
+    public AtorDTO findByID(Long id) throws AtorNotFoundException {
+        return atorRepository.findById(id).map(atorMapper::toDTO).orElseThrow(() -> new AtorNotFoundException(id));
     }
 
     @Override
-    public MessageResponse update(Ator ator, Long id) throws AtorNotFoundException {
-        var actorToBeUpdated = atorRepository.findById(id).orElseThrow(() -> new AtorNotFoundException(id));
+    public MessageResponse update(AtorDTO atorDTO, Long id) throws AtorNotFoundException {
+        var ator = atorRepository.findById(id).orElseThrow(() -> new AtorNotFoundException(id));
 
-        actorToBeUpdated.setNome(ator.getNome());
-        actorToBeUpdated.setIdade(ator.getIdade());
-        actorToBeUpdated.setNomeDoPersonagem(ator.getNomeDoPersonagem());
+        ator.setNome(atorDTO.getNome());
+        ator.setIdade(atorDTO.getIdade());
+        ator.setNomeDoPersonagem(atorDTO.getNomeDoPersonagem());
 
-        atorRepository.save(actorToBeUpdated);
+        atorRepository.save(ator);
         return messageResponse.createMessageResponse("Atualizando o ator com id= ", id);
     }
 
