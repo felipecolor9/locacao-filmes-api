@@ -19,23 +19,25 @@ public class LocacaoService {
     private LocacaoRepository locacaoRepository;
     private ClienteService clienteService;
     private FilmeService filmeService;
+    private MessageResponse messageResponse;
 
     @Autowired
-    public LocacaoService(LocacaoRepository locacaoRepository, ClienteService clienteService,  FilmeService filmeService) {
+    public LocacaoService(LocacaoRepository locacaoRepository, ClienteService clienteService,  FilmeService filmeService, MessageResponse messageResponse) {
         this.locacaoRepository = locacaoRepository;
         this.clienteService = clienteService;
         this.filmeService = filmeService;
+        this.messageResponse = messageResponse;
     }
 
     public MessageResponse add(Locacao locacao, long filmeId, long clientId) throws FilmeNotFoundException, FilmeAlreadyRentedException, ClienteNotFoundException {
         if (verifyRentDisponibility(filmeId)) {
             locacao.setDataInicioLocacao(LocalDateTime.now());
-            locacao.setFilme(filmeService.findByID(filmeId));
-            locacao.setCliente(clienteService.findByID(clientId));
+//            locacao.setFilme(filmeService.findByID(filmeId));
+//            locacao.setCliente(clienteService.findByID(clientId));
             locacaoRepository.save(locacao);
-            return createMessageResponse("Alugando filme com ID= ", filmeId);
+            return messageResponse.createMessageResponse("Alugando filme com ID= ", filmeId);
         }
-        return createMessageResponse("Não foi possível alugar filme com ID= ", filmeId);
+        return messageResponse.createMessageResponse("Não foi possível alugar filme com ID= ", filmeId);
     }
 
     private boolean verifyRentDisponibility(long filmeId) throws FilmeAlreadyRentedException {
@@ -57,12 +59,5 @@ public class LocacaoService {
 
     public Locacao findByID(Long id) throws LocacaoNotFoundException {
         return locacaoRepository.findById(id).orElseThrow(() -> new LocacaoNotFoundException(id));
-    }
-
-    public MessageResponse createMessageResponse(String msg, Long id) {
-        return new MessageResponse.MessageResponseBuilder()
-                .addMessage(msg)
-                .addIdObj(id)
-                .build();
     }
 }
