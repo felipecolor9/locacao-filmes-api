@@ -1,10 +1,7 @@
 package com.lipsoft.locacaofilmesapi.controller;
 
 import com.lipsoft.locacaofilmesapi.entities.Locacao;
-import com.lipsoft.locacaofilmesapi.exceptions.ClienteNotFoundException;
-import com.lipsoft.locacaofilmesapi.exceptions.FilmeAlreadyRentedException;
-import com.lipsoft.locacaofilmesapi.exceptions.FilmeNotFoundException;
-import com.lipsoft.locacaofilmesapi.exceptions.LocacaoNotFoundException;
+import com.lipsoft.locacaofilmesapi.exceptions.*;
 import com.lipsoft.locacaofilmesapi.response.MessageResponse;
 import com.lipsoft.locacaofilmesapi.services.LocacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +23,7 @@ public class LocacaoController {
 
     @PostMapping("/filme/{idFilme}/cliente/{idCliente}")
     @ResponseStatus(HttpStatus.CREATED)
-    public MessageResponse rent(@RequestBody @Valid Locacao locacao, @PathVariable Long idFilme, @PathVariable Long idCliente) throws FilmeAlreadyRentedException, FilmeNotFoundException, ClienteNotFoundException {
+    public MessageResponse rent(@RequestBody @Valid Locacao locacao, @PathVariable long idFilme, @PathVariable long idCliente) throws FilmeNotFoundException, ClienteNotFoundException {
         return locacaoService.add(locacao, idFilme, idCliente);
     }
 
