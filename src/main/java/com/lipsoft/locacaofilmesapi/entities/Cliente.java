@@ -1,7 +1,6 @@
 package com.lipsoft.locacaofilmesapi.entities;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "TBL_CLIENTES")
@@ -9,17 +8,17 @@ public class Cliente {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column @NotNull
+    @Column
     private String nomeCompleto;
-    @Column @NotNull
+    @Column
     private int idade;
-    @Column @NotNull
+    @Column
     private String estadoSigla;
-    @Column @NotNull
+    @Column
     private String cidade;
-    @Column @NotNull
+    @Column
     private String complemento;
-    @Column @NotNull
+    @Column
     private String cep;
 
     public Cliente() {
