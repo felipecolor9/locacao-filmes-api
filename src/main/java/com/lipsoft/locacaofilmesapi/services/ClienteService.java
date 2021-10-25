@@ -1,67 +1,65 @@
-package com.lipsoft.locacaofilmesapi.services;
+    package com.lipsoft.locacaofilmesapi.services;
 
-import com.lipsoft.locacaofilmesapi.entities.Cliente;
+import com.lipsoft.locacaofilmesapi.dto.ClienteDTO;
 import com.lipsoft.locacaofilmesapi.exceptions.ClienteNotFoundException;
+import com.lipsoft.locacaofilmesapi.mapper.ClienteMapper;
 import com.lipsoft.locacaofilmesapi.repository.ClienteRepository;
 import com.lipsoft.locacaofilmesapi.response.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Locale;
+import java.util.stream.Collectors;
 
-@Service
-public class ClienteService implements DbBasicsService<Cliente> {
+    @Service
+public class ClienteService implements DbBasicsService<ClienteDTO> {
     private ClienteRepository clienteRepository;
+    private MessageResponse messageResponse;
+    private final ClienteMapper clienteMapper = ClienteMapper.INSTANCE;
 
     @Autowired
-    public ClienteService(ClienteRepository clienteRepository) {
+    public ClienteService(ClienteRepository clienteRepository, MessageResponse messageResponse) {
         this.clienteRepository = clienteRepository;
+        this.messageResponse = messageResponse;
     }
 
     @Override
-    public MessageResponse add(Cliente cliente) {
-        cliente.setEstadoSigla(cliente.getEstadoSigla().toUpperCase().trim());
+    public MessageResponse add(ClienteDTO clienteDTO) {
+        var cliente = clienteRepository.save(clienteMapper.toModel(clienteDTO));
+        return messageResponse.createMessageResponse("Criado o cliente com id= ", cliente.getId());
+    }
+
+    @Override
+    public List<ClienteDTO> findAll() {
+        return clienteRepository.findAll()
+                .stream().map(clienteMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ClienteDTO findByID(Long id) throws ClienteNotFoundException {
+        return clienteRepository.findById(id).map(clienteMapper::toDTO).orElseThrow(() -> new ClienteNotFoundException(id));
+    }
+
+    @Override
+    public MessageResponse update(ClienteDTO clienteDTO, Long id) throws ClienteNotFoundException {
+        var cliente = clienteRepository.findById(id).orElseThrow(() -> new ClienteNotFoundException(id));
+
+        cliente.setNomeCompleto(clienteDTO.getNomeCompleto());
+        cliente.setIdade(clienteDTO.getIdade());
+        cliente.setEstadoSigla(clienteDTO.getEstadoSigla());
+        cliente.setCidade(clienteDTO.getCidade());
+        cliente.setComplemento(clienteDTO.getComplemento());
+        cliente.setCep(clienteDTO.getCep());
+
         clienteRepository.save(cliente);
-        return createMessageResponse("Criado o cliente com id= ",cliente.getId());
-    }
-
-    @Override
-    public List<Cliente> findAll() {
-        return clienteRepository.findAll();
-    }
-
-    @Override
-    public Cliente findByID(Long id) throws ClienteNotFoundException {
-        return clienteRepository.findById(id).orElseThrow(() -> new ClienteNotFoundException(id));
-    }
-
-    @Override
-    public MessageResponse update(Cliente cliente, Long id) throws ClienteNotFoundException {
-        var clienteToBeUpdated = clienteRepository.findById(id).orElseThrow(() -> new ClienteNotFoundException(id));
-
-        clienteToBeUpdated.setNomeCompleto(cliente.getNomeCompleto());
-        clienteToBeUpdated.setIdade(cliente.getIdade());
-        clienteToBeUpdated.setEstadoSigla(cliente.getEstadoSigla());
-        clienteToBeUpdated.setCidade(cliente.getCidade());
-        clienteToBeUpdated.setComplemento(cliente.getComplemento());
-        clienteToBeUpdated.setCep(cliente.getCep());
-
-        clienteRepository.save(clienteToBeUpdated);
-        return createMessageResponse("Atualizado o cliente com o id= ",id);
+        return messageResponse.createMessageResponse("Atualizado o cliente com o id= ", id);
     }
 
     @Override
     public MessageResponse deleteById(Long id) throws ClienteNotFoundException {
         clienteRepository.findById(id).orElseThrow(() -> new ClienteNotFoundException(id));
         clienteRepository.deleteById(id);
-        return createMessageResponse("Deletado o cliente com id= ",id);
-    }
-
-    public MessageResponse createMessageResponse(String msg, Long id) {
-        return new MessageResponse.MessageResponseBuilder()
-                .addMessage(msg)
-                .addIdObj(id)
-                .build();
+        return messageResponse.createMessageResponse("Deletado o cliente com id= ", id);
     }
 }
