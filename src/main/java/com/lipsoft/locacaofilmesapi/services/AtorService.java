@@ -12,16 +12,18 @@ import java.util.List;
 @Service
 public class AtorService implements DbBasicsService<Ator> {
     private AtorRepository atorRepository;
+    private MessageResponse messageResponse;
 
     @Autowired
-    public AtorService(AtorRepository atorRepository) {
+    public AtorService(AtorRepository atorRepository, MessageResponse messageResponse) {
         this.atorRepository = atorRepository;
+        this.messageResponse = messageResponse;
     }
 
     @Override
     public MessageResponse add(Ator ator) {
         atorRepository.save(ator);
-        return createMessageResponse("Criado o ator com id= ",ator.getId());
+        return messageResponse.createMessageResponse("Criando o ator com id= ", ator.getId());
     }
 
     @Override
@@ -43,22 +45,13 @@ public class AtorService implements DbBasicsService<Ator> {
         actorToBeUpdated.setNomeDoPersonagem(ator.getNomeDoPersonagem());
 
         atorRepository.save(actorToBeUpdated);
-        return createMessageResponse("Atualizado o ator com o id= ",id);
+        return messageResponse.createMessageResponse("Atualizando o ator com id= ", id);
     }
 
     @Override
     public MessageResponse deleteById(Long id) throws AtorNotFoundException {
         atorRepository.findById(id).orElseThrow(() -> new AtorNotFoundException(id));
         atorRepository.deleteById(id);
-        return createMessageResponse("Deletado o ator com id= ",id);
+        return messageResponse.createMessageResponse("Deletando o ator com id= ", id);
     }
-
-    public MessageResponse createMessageResponse(String msg, Long id) {
-        return new MessageResponse.MessageResponseBuilder()
-                .addMessage(msg)
-                .addIdObj(id)
-                .build();
-    }
-
-
 }
