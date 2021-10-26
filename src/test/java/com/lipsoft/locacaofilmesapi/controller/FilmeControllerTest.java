@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
@@ -18,6 +17,9 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import static com.lipsoft.locacaofilmesapi.utils.JsonConvertionUtils.asJsonString;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class FilmeControllerTest {
 
     private static final String BASE_URL = "http://localhost:8080";
-    private static final String MOVIE_API_PATH = "/api/filmes/";
+    private static final String MOVIE_API_PATH = "/api/filmes";
     private static final long VALID_MOVIE_ID = 1L;
     private static final long INVALID_MOVIE_ID = 2L;
 
@@ -47,19 +49,32 @@ public class FilmeControllerTest {
     }
 
     @Test
-    void whenGETIsCalledThenAMovieIsCreated() throws Exception {
-        var filmeDTO = FilmeDTOBuilder.builder().build().toFilmeDTO();
+    void whenPOSTIsCalledThenAMovieIsCreated() throws Exception {
+        var mockFilme = FilmeDTOBuilder.builder().build().toFilmeDTO();
 
-        Mockito.lenient().when(filmeService.add(filmeDTO)).thenReturn(new MessageResponse());
+        when(filmeService.add(mockFilme)).thenReturn(new MessageResponse());
+        reset(filmeService);
 
         mockMvc.perform(post(MOVIE_API_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(filmeDTO)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.nomeDoFilme", is(filmeDTO.getNomeDoFilme())))
-                .andExpect(jsonPath("$.anoDeLancamento", is(filmeDTO.getAnoDeLancamento())))
-                .andExpect(jsonPath("$.notaDosUsuarios", is(filmeDTO.getNotaDosUsuarios())))
-                .andExpect(jsonPath("$.notaDaCritica", is (filmeDTO.getNotaDaCritica())));
+                .content(asJsonString(mockFilme)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void whenGETIsCalledThenOkStatusIsReturned() throws Exception {
+
+        var mockFilme = FilmeDTOBuilder.builder().build().toFilmeDTO();
+        when(filmeService.findByID(mockFilme.getId())).thenReturn(mockFilme);
+        reset(filmeService);
+
+        mockMvc.perform(get(MOVIE_API_PATH + "/" + mockFilme.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nomeDoFilme", is(mockFilme.getNomeDoFilme())))
+                .andExpect(jsonPath("$.anoDeLancamento", is(mockFilme.getAnoDeLancamento())))
+                .andExpect(jsonPath("$.notaDosUsuarios", is(mockFilme.getNotaDosUsuarios())))
+                .andExpect(jsonPath("$.notaDaCritica", is(mockFilme.getNotaDaCritica())));
     }
 
 
