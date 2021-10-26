@@ -5,6 +5,7 @@ import com.lipsoft.locacaofilmesapi.exceptions.FilmeNotFoundException;
 import com.lipsoft.locacaofilmesapi.mapper.FilmeMapper;
 import com.lipsoft.locacaofilmesapi.repository.FilmeRepository;
 import com.lipsoft.locacaofilmesapi.response.MessageResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,16 +13,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class FilmeService implements DbBasicsService<FilmeDTO> {
+
     private FilmeRepository filmeRepository;
     private final MessageResponse messageResponse;
     private final FilmeMapper filmeMapper = FilmeMapper.INSTANCE;
-
-    @Autowired
-    public FilmeService(FilmeRepository filmeRepository, MessageResponse messageResponse) {
-        this.filmeRepository = filmeRepository;
-        this.messageResponse = messageResponse;
-    }
 
     @Override
     public MessageResponse add(FilmeDTO filmeDTO) {
