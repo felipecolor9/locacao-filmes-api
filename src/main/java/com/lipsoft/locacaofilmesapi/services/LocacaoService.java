@@ -33,7 +33,7 @@ public class LocacaoService {
         this.messageResponse = messageResponse;
     }
 
-    public MessageResponse add(Locacao locacao, long filmeId, long clientId) throws ClienteNotFoundException, FilmeNotFoundException {
+    public MessageResponse add(Locacao locacao, long filmeId, long clientId) throws ClienteNotFoundException, FilmeNotFoundException, FilmeAlreadyRentedException, InvalidRentDataException {
         locacao.setDataInicioLocacao(LocalDateTime.now());
         if (locacao.getDataInicioLocacao().isBefore(locacao.getDataFimLocacao()) ) {
             if (!(verifyIfMovieIsAlreadyRentedByClient(filmeId, clientId, locacao))) {
@@ -44,8 +44,8 @@ public class LocacaoService {
 
                 locacaoRepository.save(locacao);
                 return messageResponse.createMessageResponse("Alugando filme com ID= ", filmeId);
-            } return messageResponse.createMessageResponse("O filme já está alugado em sua conta! ID= ", filmeId);
-        } return messageResponse.createMessageResponse("Data inválida para alugar filme com ID= ", filmeId);
+            } else throw new FilmeAlreadyRentedException(filmeId);
+        } else throw new InvalidRentDataException(locacao.getDataInicioLocacao());
     }
 
     private boolean verifyIfMovieIsAlreadyRentedByClient(long filmeId ,long clienteId, Locacao locacaoPending) {

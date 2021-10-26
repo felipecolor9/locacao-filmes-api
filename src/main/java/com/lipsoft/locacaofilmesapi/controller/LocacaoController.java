@@ -23,7 +23,7 @@ public class LocacaoController {
 
     @PostMapping("/filme/{idFilme}/cliente/{idCliente}")
     @ResponseStatus(HttpStatus.CREATED)
-    public MessageResponse rent(@RequestBody @Valid Locacao locacao, @PathVariable long idFilme, @PathVariable long idCliente) throws FilmeNotFoundException, ClienteNotFoundException {
+    public MessageResponse rent(@RequestBody @Valid Locacao locacao, @PathVariable long idFilme, @PathVariable long idCliente) throws FilmeNotFoundException, ClienteNotFoundException, FilmeAlreadyRentedException, InvalidRentDataException {
         return locacaoService.add(locacao, idFilme, idCliente);
     }
 
