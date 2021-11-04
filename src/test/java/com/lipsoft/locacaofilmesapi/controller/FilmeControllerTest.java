@@ -46,6 +46,7 @@ public class FilmeControllerTest {
                 .build();
     }
 
+    //API crud functions example tests
     @Test
     void whenPOSTIsCalledThenAMovieIsCreated() throws Exception {
         var mockedMovie = FilmeDTOBuilder.builder().build().toFilmeDTO();
