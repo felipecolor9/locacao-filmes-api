@@ -1,6 +1,7 @@
 package com.lipsoft.locacaofilmesapi.services;
 
 import com.lipsoft.locacaofilmesapi.dto.FilmeDTO;
+import com.lipsoft.locacaofilmesapi.entities.Filme;
 import com.lipsoft.locacaofilmesapi.exceptions.FilmeNotFoundException;
 import com.lipsoft.locacaofilmesapi.mapper.FilmeMapper;
 import com.lipsoft.locacaofilmesapi.repository.FilmeRepository;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +25,7 @@ public class FilmeService implements DbBasicsService<FilmeDTO> {
     @Override
     public MessageResponse add(FilmeDTO filmeDTO) {
         var filme = filmeRepository.save(filmeMapper.toModel(filmeDTO));
+        filme.setAtores(new ArrayList<>());
         return messageResponse.createMessageResponse("Criado o filme com id= ", filme.getId());
     }
 
@@ -31,6 +34,10 @@ public class FilmeService implements DbBasicsService<FilmeDTO> {
         return filmeRepository.findAll().stream()
                 .map(filmeMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    public List<Filme> findAllModel() {
+        return filmeRepository.findAll();
     }
 
     @Override

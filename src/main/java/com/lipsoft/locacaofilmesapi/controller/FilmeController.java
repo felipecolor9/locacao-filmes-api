@@ -1,6 +1,7 @@
 package com.lipsoft.locacaofilmesapi.controller;
 
 import com.lipsoft.locacaofilmesapi.dto.FilmeDTO;
+import com.lipsoft.locacaofilmesapi.entities.Filme;
 import com.lipsoft.locacaofilmesapi.exceptions.FilmeNotFoundException;
 import com.lipsoft.locacaofilmesapi.response.MessageResponse;
 import com.lipsoft.locacaofilmesapi.services.FilmeService;
@@ -58,8 +59,8 @@ public class FilmeController {
     @ApiOperation(value = DOC_GET_OPERATION_LIST)
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
-    public List<FilmeDTO> findAll() {
-        return filmeService.findAll();
+    public List<Filme> findAll() {
+        return filmeService.findAllModel();
     }
 
 
