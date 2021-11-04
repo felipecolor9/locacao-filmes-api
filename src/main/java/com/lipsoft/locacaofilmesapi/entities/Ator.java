@@ -1,10 +1,17 @@
 package com.lipsoft.locacaofilmesapi.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import java.util.Collection;
 
 @Entity
 @Table(name = "TBL_ATORES")
+@AllArgsConstructor @NoArgsConstructor
+@Getter @Setter
 public class Ator {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,42 +22,7 @@ public class Ator {
     private int idade;
     @Column
     private String nomeDoPersonagem;
-
-    public Ator() {}
-
-    public Ator(String nome, int idade, String nomeDoPersonagem) {
-        this.nome = nome;
-        this.idade = idade;
-        this.nomeDoPersonagem = nomeDoPersonagem;
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public int getIdade() {
-        return idade;
-    }
-
-    public void setIdade(int idade) {
-        this.idade = idade;
-    }
-
-    public String getNomeDoPersonagem() {
-        return nomeDoPersonagem;
-    }
-
-    public void setNomeDoPersonagem(String nomeDoPersonagem) {
-        this.nomeDoPersonagem = nomeDoPersonagem;
-    }
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Collection<Filme> filmografia;
 
 }
