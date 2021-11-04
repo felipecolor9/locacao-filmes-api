@@ -14,17 +14,21 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/locacoes")
 public class LocacaoController {
+
     private LocacaoService locacaoService;
+    private MessageResponse messageResponse;
 
     @Autowired
-    public LocacaoController(LocacaoService locacaoService) {
+    public LocacaoController(LocacaoService locacaoService, MessageResponse messageResponse) {
         this.locacaoService = locacaoService;
+        this.messageResponse = messageResponse;
     }
 
     @PostMapping("/filme/{idFilme}/cliente/{idCliente}")
     @ResponseStatus(HttpStatus.CREATED)
     public MessageResponse rent(@RequestBody @Valid Locacao locacao, @PathVariable long idFilme, @PathVariable long idCliente) throws FilmeNotFoundException, ClienteNotFoundException, FilmeAlreadyRentedException, InvalidRentDataException {
-        return locacaoService.add(locacao, idFilme, idCliente);
+        locacaoService.add(locacao, idFilme, idCliente);
+        return messageResponse.createMessageResponse("Alugando filme com ID= ", idFilme);
     }
 
     @GetMapping("/{id}")
