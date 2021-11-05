@@ -28,27 +28,24 @@ public class LocacaoService {
     }
 
     public Locacao add(Locacao locacao, long filmeId, long clientId) throws ClienteNotFoundException, FilmeNotFoundException, FilmeAlreadyRentedException, InvalidRentDataException {
-
         locacao.setDataInicioLocacao(LocalDateTime.now());
-        if (locacao.getDataInicioLocacao().isBefore(locacao.getDataFimLocacao()) ) {
-            if (!(verifyIfMovieIsAlreadyRented(filmeId))) {
 
-                clienteService.findByID(clientId);
-                filmeService.findByID(filmeId);
+        if (locacao.getDataInicioLocacao().isBefore(locacao.getDataFimLocacao()) ) {
+            if (verifyIfMovieIsAvailable(filmeId)) {
                 locacao.setFilme(filmeRepository.getById(filmeId));
                 locacao.setCliente(clienteRepository.getById(clientId));
-
                 return locacaoRepository.save(locacao);
+
             } else throw new FilmeAlreadyRentedException(filmeId);
         } else throw new InvalidRentDataException(locacao.getDataInicioLocacao());
     }
 
-    private boolean verifyIfMovieIsAlreadyRented(long filmeId) throws FilmeAlreadyRentedException {
+    private boolean verifyIfMovieIsAvailable(long filmeId) throws FilmeAlreadyRentedException {
         if (findAll().stream().anyMatch
                 (locacao -> locacao.getFilme().getId() == filmeId && locacao.getDataFimLocacao().isAfter(LocalDateTime.now()))) {
             throw new FilmeAlreadyRentedException(filmeId);
         }
-        return false;
+        return true;
     }
 
     public List<Locacao> findAll() {
