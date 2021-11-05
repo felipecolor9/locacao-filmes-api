@@ -15,40 +15,33 @@ public class LocacaoService {
 
     private LocacaoRepository locacaoRepository;
     private ClienteRepository clienteRepository;
-    private FilmeService filmeService;
-    private ClienteService clienteService;
     private FilmeRepository filmeRepository;
 
-    public LocacaoService(LocacaoRepository locacaoRepository, ClienteRepository clienteRepository, FilmeService filmeService, ClienteService clienteService, FilmeRepository filmeRepository) {
+    public LocacaoService(LocacaoRepository locacaoRepository, ClienteRepository clienteRepository, FilmeRepository filmeRepository) {
         this.locacaoRepository = locacaoRepository;
         this.clienteRepository = clienteRepository;
-        this.filmeService = filmeService;
-        this.clienteService = clienteService;
         this.filmeRepository = filmeRepository;
     }
 
     public Locacao add(Locacao locacao, long filmeId, long clientId) throws ClienteNotFoundException, FilmeNotFoundException, FilmeAlreadyRentedException, InvalidRentDataException {
-
         locacao.setDataInicioLocacao(LocalDateTime.now());
-        if (locacao.getDataInicioLocacao().isBefore(locacao.getDataFimLocacao()) ) {
-            if (!(verifyIfMovieIsAlreadyRented(filmeId))) {
 
-                clienteService.findByID(clientId);
-                filmeService.findByID(filmeId);
+        if (locacao.getDataInicioLocacao().isBefore(locacao.getDataFimLocacao()) ) {
+            if (verifyIfMovieIsAvailable(filmeId)) {
                 locacao.setFilme(filmeRepository.getById(filmeId));
                 locacao.setCliente(clienteRepository.getById(clientId));
-
                 return locacaoRepository.save(locacao);
+
             } else throw new FilmeAlreadyRentedException(filmeId);
         } else throw new InvalidRentDataException(locacao.getDataInicioLocacao());
     }
 
-    private boolean verifyIfMovieIsAlreadyRented(long filmeId) throws FilmeAlreadyRentedException {
+    private boolean verifyIfMovieIsAvailable(long filmeId) throws FilmeAlreadyRentedException {
         if (findAll().stream().anyMatch
                 (locacao -> locacao.getFilme().getId() == filmeId && locacao.getDataFimLocacao().isAfter(LocalDateTime.now()))) {
             throw new FilmeAlreadyRentedException(filmeId);
         }
-        return false;
+        return true;
     }
 
     public List<Locacao> findAll() {
