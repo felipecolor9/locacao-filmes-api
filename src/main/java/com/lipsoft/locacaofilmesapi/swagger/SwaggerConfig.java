@@ -28,7 +28,7 @@ public class SwaggerConfig {
     @Bean
     public ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("POSTT")
+                .title("LOCAÇÂO-API")
                 .description(" Lipsoft web CRUD")
                 .version("1.0.0")
                 .license("Apache License Version 2.0")
