@@ -1,8 +1,8 @@
 package com.lipsoft.locacaofilmesapi.controller;
 
 import com.lipsoft.locacaofilmesapi.dto.FilmeDTO;
-import com.lipsoft.locacaofilmesapi.entities.Filme;
 import com.lipsoft.locacaofilmesapi.exceptions.FilmeNotFoundException;
+import com.lipsoft.locacaofilmesapi.exceptions.InvalidFilmNameInExternalAPIException;
 import com.lipsoft.locacaofilmesapi.response.MessageResponse;
 import com.lipsoft.locacaofilmesapi.services.FilmeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,8 @@ public class FilmeController {
     @ApiOperation(value = DOC_POST_OPERATION)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MessageResponse add(@RequestBody @Valid FilmeDTO filmeDTO) {
-        return filmeService.add(filmeDTO);
+    public MessageResponse add(String movieName) throws InvalidFilmNameInExternalAPIException {
+        return filmeService.add(movieName);
     }
 
     @ApiOperation(value = DOC_GET_OPERATION)
@@ -55,20 +55,11 @@ public class FilmeController {
         return filmeService.findByID(id);
     }
 
-
     @ApiOperation(value = DOC_GET_OPERATION_LIST)
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
-    public List<Filme> findAll() {
-        return filmeService.findAllModel();
-    }
-
-
-    @ApiOperation(value = DOC_PUT_OPERATION)
-    @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public MessageResponse update(@RequestBody @Valid FilmeDTO filmeDTO, @PathVariable Long id) throws FilmeNotFoundException {
-        return filmeService.update(filmeDTO ,id);
+    public List<FilmeDTO> findAll() {
+        return filmeService.findAll();
     }
 
     @ApiOperation(value = DOC_DELETE_OPERATION)
