@@ -1,14 +1,15 @@
 package com.lipsoft.locacaofilmesapi.dto;
 
+import com.fasterxml.jackson.annotation.*;
+import com.lipsoft.locacaofilmesapi.entities.Ator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 
 @Data
 @Builder
@@ -16,19 +17,22 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class FilmeDTO {
 
+    @JsonIgnore
     private Long id;
-
     @NotNull
     @Size(min = 1, max = 200, message = "O nome do filme deve conter de 1 a 200 caracteres")
+    @JsonProperty("title")
     private String nomeDoFilme;
     @NotNull
-    @Min(value = 1900, message = "O ano de lançamento não deve ser anterior a 1900")
-//  @Max(value = 2021, message = "O ano de lançamento não deve ser posterior ao ano atual(2021)") -> Tratamento via front-end
-    private Integer anoDeLancamento;
+    @JsonProperty("plot")
+    private String sinopse;
     @NotNull
-    @Max(value = 10, message = "A nota deve estar no valor entre 0 e 10")
+    @JsonProperty("year")
+    private int anoDeLancamento;
+    @NotNull
+    @JsonProperty("rating")
     private double notaDosUsuarios;
     @NotNull
-    @Max(value = 10, message = "A nota deve estar no valor entre 0 e 10")
-    private double notaDaCritica;
+    @JsonProperty("cast")
+    private Collection<Ator> elenco;
 }
