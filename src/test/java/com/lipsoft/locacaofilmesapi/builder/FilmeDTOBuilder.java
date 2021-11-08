@@ -22,12 +22,12 @@ public class FilmeDTOBuilder {
     @Builder.Default
     private double notaDaCritica = 7.8;
 
-    public FilmeDTO toFilmeDTO() {
-        return new FilmeDTO(id, nomeDoFilme, anoDeLancamento, notaDosUsuarios, notaDaCritica);
-    }
+//    public FilmeDTO toFilmeDTO() {
+//        return new FilmeDTO(id, nomeDoFilme, anoDeLancamento, notaDosUsuarios, notaDaCritica);
+//    }
 
-    public Filme toFilme() {
-        return new Filme(id, nomeDoFilme, anoDeLancamento, notaDosUsuarios, notaDaCritica);
-    }
+//    public Filme toFilme() {
+//        return new Filme(id, nomeDoFilme, anoDeLancamento, notaDosUsuarios, notaDaCritica);
+//    }
 
 }

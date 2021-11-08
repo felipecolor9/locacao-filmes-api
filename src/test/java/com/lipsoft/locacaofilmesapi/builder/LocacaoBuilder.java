@@ -12,9 +12,9 @@ public class LocacaoBuilder {
 
     @Builder.Default
     private Long id= 1L;
-
-    @Builder.Default
-    private Filme filme = FilmeDTOBuilder.builder().build().toFilme();
+//
+//    @Builder.Default
+//    private Filme filme = FilmeDTOBuilder.builder().build().toFilme();
 
     @Builder.Default
     private Cliente cliente = ClienteDTOBuilder.builder().build().toCliente();
@@ -38,13 +38,13 @@ public class LocacaoBuilder {
     }
 
     //Mock rent with Client and Movie
-    public Locacao toBoundLocacao() {
-        return new Locacao(id,
-                filme,
-                cliente,
-                dataInicioLocacao,
-                dataFimLocacao,
-                valorTotal);
-    }
+//    public Locacao toBoundLocacao() {
+//        return new Locacao(id,
+//                filme,
+//                cliente,
+//                dataInicioLocacao,
+//                dataFimLocacao,
+//                valorTotal);
+//    }
 
 }
