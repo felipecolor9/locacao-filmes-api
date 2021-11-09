@@ -38,9 +38,9 @@ public class FilmeService {
     }
 
     public MessageResponse add(String movieName) throws InvalidFilmNameInExternalAPIException {
-        var filmeImdbAPI = requestMovieInfo(movieName);
-        filmeImdbAPI.setElenco(new ArrayList<>());
-        var savedFilme = filmeRepository.save(filmeMapper.toModel(filmeImdbAPI));
+        var imdbMovieInfo = requestMovieInfo(movieName);
+        imdbMovieInfo.setElenco(new ArrayList<>());
+        var savedFilme = filmeRepository.save(filmeMapper.toModel(imdbMovieInfo));
         return messageResponse.createMessageResponse("Criado o filme com id= ", savedFilme.getId());
     }
 
@@ -54,13 +54,12 @@ public class FilmeService {
         var request = new HttpEntity<String>(headers);
 
         var response= restTemplate.exchange(url, HttpMethod.GET, request, FilmeDTO.class);
-        var jsonResponse = gson.toJson(response.getBody());
-        var filme = gson.fromJson(jsonResponse, FilmeDTO.class);
+        var filme = gson.fromJson(gson.toJson(response.getBody()), FilmeDTO.class);
 
         if (filme.getNomeDoFilme().isBlank()) throw new InvalidFilmNameInExternalAPIException(movieName);
         if (response.getStatusCode() == HttpStatus.OK) log.info("200 OK");
 
-    return response.getBody();
+    return filme;
     }
 
     public List<FilmeDTO> findAll() {
